@@ -25,3 +25,4 @@ type Y7 = Equal<true, boolean> // boolean
 type Y8 = Equal<1 | 2, 1> // boolean
 type Y9 = Equal<any, string> // true
 type Y10 = Equal<{name: string}, {readonly name: string}> // true
+export{}
