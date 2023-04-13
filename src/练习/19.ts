@@ -18,7 +18,7 @@ type Result = RequiredKeys<{ foo: number; bar?: string }>;
 // }
 // type RequiredKeys<T , K = keyof T> = K extends keyof T ? T extends Required<Pick<T,K>> ? K : never
 //   :never
-type RequiredKeys<T, K = keyof T> = K extends keyof T ? K : never;
+type RequiredKeys<T, K = keyof T> = K extends keyof T ? T extends Required<Pick<T, K>> ? K : never : never;
 
 // ----我是分割线---
 // Implement Capitalize<T> which converts the first letter of a string to uppercase and leave the rest as-is.
@@ -27,3 +27,6 @@ type RequiredKeys<T, K = keyof T> = K extends keyof T ? K : never;
 
 
 type capitalized = Capitalize<'hello world'> // expected to be 'Hello world'
+type Capitalize<T extends string> = T extends `${infer F}${infer R}` ? `${Uppercase<F>}${R}` : T;
+
+export {}
