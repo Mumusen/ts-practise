@@ -1,13 +1,3 @@
-/*
- * @Author       : error: git config user.name & please set dead value or install git
- * @Date         : 2023-04-19 14:38:29
- * @LastEditors  : error: git config user.name & please set dead value or install git
- * @LastEditTime : 2023-04-19 16:15:28
- * @FilePath     : /src/练习/26.ts
- * @Description  : 
- * Copyright 2023 OBKoro1, All Rights Reserved. 
- * 2023-04-19 14:38:29
- */
 /**
  * @typedef {Object} Item 
  * @property {number} id
@@ -33,72 +23,35 @@ type Item = {
     gridColumnEnd?: number | string
   }
 }
-function layout(rows: number, columns: number, items: Array<Item>): Grid {
-  const grid: Grid = Array(rows).fill(null).map(() => Array(columns).fill(0));
-  let currentRow = 0;
-  let currentColumn = 0;
+function layoutGrid(rows: number, columns: number, items: Item[]): Grid {
+    const grid: Grid = Array.from({ length: rows }, () => Array.from({ length: columns }, () => 0));
 
-  for (const item of items) {
-    if (item.style) {
-      const {
-        gridRowStart,
-        gridRowEnd,
-        gridColumnStart,
-        gridColumnEnd
-      } = item.style;
+    items.forEach(item => {
+        const { id, style } = item;
+        let rowStart = 1, rowEnd = rows, colStart = 1, colEnd = columns;
 
-      if (gridRowStart) {
-        currentRow = getRow(gridRowStart);
-      }
-
-      if (gridColumnStart) {
-        currentColumn = getColumn(gridColumnStart);
-      }
-
-      for (let row = currentRow; row < Math.min(rows, getRow(gridRowEnd || rows + 1)); row++) {
-        for (let column = currentColumn; column < Math.min(columns, getColumn(gridColumnEnd || columns + 1)); column++) {
-          if (grid[row][column] === 0) {
-            grid[row][column] = item.id;
-          }
+        if (style) {
+            if (style.gridRowStart !== undefined) {
+                rowStart = Number(style.gridRowStart);
+            }
+            if (style.gridRowEnd !== undefined) {
+                rowEnd = Number(style.gridRowEnd);
+            }
+            if (style.gridColumnStart !== undefined) {
+                colStart = Number(style.gridColumnStart);
+            }
+            if (style.gridColumnEnd !== undefined) {
+                colEnd = Number(style.gridColumnEnd);
+            }
         }
-      }
 
-      if (!gridRowEnd || getRow(gridRowEnd) === rows) {
-        currentColumn += 1;
-      } else if (!gridColumnEnd || getColumn(gridColumnEnd) === columns) {
-        currentRow += 1;
-        currentColumn = 0;
-      }
-    } else {
-      while (grid[currentRow][currentColumn] !== 0) {
-        currentColumn += 1;
-        if (currentColumn === columns) {
-          currentRow += 1;
-          currentColumn = 0;
+        for (let i = rowStart - 1; i < rowEnd; i++) {
+            for (let j = colStart - 1; j < colEnd; j++) {
+                grid[i][j] = id;
+            }
         }
-      }
-      grid[currentRow][currentColumn] = item.id;
-      currentColumn += 1;
-    }
-  }
+    });
 
-  return grid;
-
-  function getRow(value: number | string): number {
-    if (typeof value === 'number') {
-      return value - 1;
-    } else {
-      const span = parseInt(value.split(' ')[1], 10);
-      return currentRow + span > rows ? rows - span : currentRow;
-    }
-  }
-
-  function getColumn(value: number | string): number {
-    if (typeof value === 'number') {
-      return value - 1;
-    } else {
-      const span = parseInt(value.split(' ')[1], 10);
-      return currentColumn + span > columns ? columns - span : currentColumn;
-    }
-  }
+    return grid;
 }
+
